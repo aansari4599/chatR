@@ -1,7 +1,7 @@
 import { Router, Response, NextFunction } from "express";
 import multer from "multer";
 import authMiddleware, { AuthRequest } from "../middleware/auth";
-import cloudinary from "../utils/cloudinary";
+import { getCloudinary } from "../utils/cloudinary";
 import { ALLOWED_MIME_TYPES, MAX_FILE_SIZE } from "../utils/validate";
 import { AppError } from "../utils/errors";
 
@@ -37,7 +37,7 @@ router.post(
       const b64 = Buffer.from(req.file.buffer).toString("base64");
       const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
-      const result = await cloudinary.uploader.upload(dataURI, {
+      const result = await getCloudinary().uploader.upload(dataURI, {
         folder: "chatr",
         resource_type: "auto",
       });
