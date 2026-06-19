@@ -20,6 +20,8 @@ validateEnv();
 const app = express();
 const server = createServer(app);
 
+app.set("trust proxy", 1);
+
 app.use(helmet());
 app.use(compression());
 app.use(morgan("short"));
