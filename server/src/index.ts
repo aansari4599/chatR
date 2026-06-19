@@ -24,7 +24,19 @@ app.use(helmet());
 app.use(compression());
 app.use(morgan("short"));
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const allowed = [
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:5173",
+    ].filter(Boolean);
+    if (allowed.some((o) => origin.startsWith(o as string)) || origin.endsWith(".vercel.app")) {
+      return callback(null, true);
+    }
+    callback(null, true);
+  },
   credentials: true,
 }));
 

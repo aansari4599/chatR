@@ -13,7 +13,19 @@ interface AuthSocket extends Socket {
 export const setupSocket = (server: HttpServer) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const allowed = [
+          process.env.CLIENT_URL,
+          "http://localhost:5173",
+          "http://localhost:3000",
+          "http://127.0.0.1:5173",
+        ].filter(Boolean);
+        if (allowed.some((o) => origin.startsWith(o as string)) || origin.endsWith(".vercel.app")) {
+          return callback(null, true);
+        }
+        callback(null, true);
+      },
       methods: ["GET", "POST"],
     },
     maxHttpBufferSize: 1e7,
